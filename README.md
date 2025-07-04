@@ -2,9 +2,15 @@
 
 This repository contains the codebase for the Raise Your Hack Hackathon project, featuring a Next.js frontend and a Python backend.
 
+## About the Project
+
+### HiredMind
+
+This is an AI Powered Hiring Application that can handle all the steps involving the hiring process. This application will handle multiple AI Agents workflows to complete all the necessary steps involved in it.
+
 ## Project Structure
 
--   **frontend/**: Next.js application 
+-   **frontend/**: Next.js application
 -   **backend/**: Python backend (managed with the `uv` package manager)
 
 ---
