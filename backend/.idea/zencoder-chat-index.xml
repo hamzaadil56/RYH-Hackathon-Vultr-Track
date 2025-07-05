@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ai.zencoder.plugin.chat.index">
-    <option name="activeChatId" value="b89155b3-c4d9-4739-b8c4-f8152c1fd110" />
-    <option name="chatMetadata" value="{&quot;b89155b3-c4d9-4739-b8c4-f8152c1fd110&quot;:{&quot;id&quot;:&quot;b89155b3-c4d9-4739-b8c4-f8152c1fd110&quot;,&quot;title&quot;:&quot;see why im geeting errors in main&quot;,&quot;createdAt&quot;:1751745339274,&quot;updatedAt&quot;:1751745347343,&quot;messageCount&quot;:2,&quot;lastMessagePreview&quot;:&quot;To help you identify why you're getting errors in your `main.py` file, let's go through the code sni...&quot;}}" />
-  </component>
-</project>
