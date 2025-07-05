@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from backend.models.organization import Organization
 from backend.schemas.auth import SignupRequest, SigninRequest
-from backend.core.security import hash_password, verify_password, create_access_token
+from backend.core.security import get_password_hash, verify_password, create_access_token
 from fastapi import HTTPException, status
 
 
@@ -12,7 +12,7 @@ def signup_org(db: Session, data: SignupRequest):
     org = Organization(
         name=data.name,
         email=data.email,
-        hashed_password=hash_password(data.password)
+        hashed_password=get_password_hash(data.password)
     )
     db.add(org)
     db.commit()
