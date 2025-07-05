@@ -75,10 +75,10 @@ export default function Chatbot({ agentName, agentDescription, onSendMessage }: 
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto h-[600px] flex flex-col backdrop-blur-sm bg-white/95 border border-[#3887F6]/20 rounded-2xl shadow-2xl">
+        <div className="w-full max-w-4xl mx-auto h-[600px] flex flex-col backdrop-blur-sm bg-white/95 dark:bg-[#0F172A]/95 border border-[#3887F6]/20 dark:border-[#3887F6]/30 rounded-2xl shadow-2xl">
             <div className="p-6 flex flex-col h-full">
                 {/* Header */}
-                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[#3887F6]/20">
+                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[#3887F6]/20 dark:border-[#3887F6]/30">
                     <div className="relative">
                         <Image
                             src="/assets/Logo.png"
@@ -91,16 +91,15 @@ export default function Chatbot({ agentName, agentDescription, onSendMessage }: 
                         <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#3AC7A7] rounded-full border border-white animate-pulse"></div>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-lg text-[#5A6A7A] flex items-center gap-2">
-                            <Sparkles className="w-5 h-5 text-[#3887F6]" />
+                        <h3 className="font-semibold text-lg text-[#5A6A7A] dark:text-[#94A3B8] flex items-center gap-2">
                             {agentName}
                         </h3>
-                        <p className="text-sm text-[#5A6A7A]/70">{agentDescription}</p>
+                        <p className="text-sm text-[#5A6A7A]/70 dark:text-[#94A3B8]/70">{agentDescription}</p>
                     </div>
                 </div>
 
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2">
+                {/* Messages with Custom Scrollbar */}
+                <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2 custom-scrollbar">
                     {messages.map((message) => (
                         <div
                             key={message.id}
@@ -108,8 +107,8 @@ export default function Chatbot({ agentName, agentDescription, onSendMessage }: 
                         >
                             <div
                                 className={`max-w-[70%] rounded-lg p-3 backdrop-blur-sm ${message.sender === 'user'
-                                        ? 'bg-gradient-to-r from-[#3887F6] to-[#3AC7A7] text-white border border-[#3887F6]/30'
-                                        : 'bg-[#F4F8FB] text-[#5A6A7A] border border-[#3887F6]/20'
+                                    ? 'bg-gradient-to-r from-[#3887F6] to-[#3AC7A7] text-white border border-[#3887F6]/30'
+                                    : 'bg-[#F4F8FB] dark:bg-[#1E293B] text-[#5A6A7A] dark:text-[#E2E8F0] border border-[#3887F6]/20 dark:border-[#3887F6]/30'
                                     }`}
                             >
                                 <div className="flex items-start gap-2">
@@ -133,7 +132,7 @@ export default function Chatbot({ agentName, agentDescription, onSendMessage }: 
                     ))}
                     {isLoading && (
                         <div className="flex justify-start">
-                            <div className="bg-[#F4F8FB] rounded-lg p-3 border border-[#3887F6]/20 backdrop-blur-sm">
+                            <div className="bg-[#F4F8FB] dark:bg-[#1E293B] rounded-lg p-3 border border-[#3887F6]/20 dark:border-[#3887F6]/30 backdrop-blur-sm">
                                 <div className="flex items-center gap-2">
                                     <div className="w-8 h-8 bg-gradient-to-r from-[#3887F6] to-[#3AC7A7] rounded-full flex items-center justify-center">
                                         <Bot className="w-4 h-4 text-white" />
@@ -156,7 +155,7 @@ export default function Chatbot({ agentName, agentDescription, onSendMessage }: 
                         onChange={(e) => setInputMessage(e.target.value)}
                         onKeyPress={handleKeyPress}
                         placeholder="Type your message..."
-                        className="flex-1 bg-white border-[#3887F6]/20 text-[#5A6A7A] placeholder:text-[#5A6A7A]/50 focus:border-[#3887F6] focus:ring-[#3887F6]/20"
+                        className="flex-1 bg-white dark:bg-[#1E293B] border-[#3887F6]/20 dark:border-[#3887F6]/30 text-[#5A6A7A] dark:text-[#E2E8F0] placeholder:text-[#5A6A7A]/50 dark:placeholder:text-[#94A3B8]/50 focus:border-[#3887F6] focus:ring-[#3887F6]/20 dark:focus:ring-[#3887F6]/20"
                         disabled={isLoading}
                     />
                     <Button

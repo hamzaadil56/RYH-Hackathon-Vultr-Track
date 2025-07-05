@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Bot, Sparkles } from "lucide-react"
 import Link from "next/link"
 import Image from 'next/image'
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 interface AgentConfig {
     name: string;
@@ -132,7 +133,7 @@ export default function AgentPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             <Sparkles className="w-5 h-5 animate-pulse text-[#3887F6]" />
-                            <p className="text-lg text-[#5A6A7A]">Loading AI Agent...</p>
+                            <p className="text-lg text-[#5A6A7A] dark:text-[#94A3B8]">Loading AI Agent...</p>
                         </div>
                     </div>
                 </div>
@@ -150,7 +151,7 @@ export default function AgentPage() {
             <header className="flex flex-col sm:flex-row justify-between items-center px-4 sm:px-8 py-4 sm:py-6 z-10 relative gap-4 sm:gap-0">
                 <div className="flex items-center gap-4">
                     <Link href="/agents">
-                        <Button variant="ghost" className="p-2 hover:bg-[#3887F6]/10 text-[#5A6A7A] border border-[#3887F6]/20">
+                        <Button variant="ghost" className="p-2 hover:bg-[#3887F6]/10 text-[#5A6A7A] dark:text-[#94A3B8] border border-[#3887F6]/20">
                             <ArrowLeft className="w-5 h-5" />
                         </Button>
                     </Link>
@@ -167,18 +168,18 @@ export default function AgentPage() {
                             <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#3AC7A7] rounded-full border-2 border-white animate-pulse"></div>
                         </div>
                         <div>
-                            <h1 className="text-xl font-semibold text-[#5A6A7A] flex items-center gap-2">
+                            <h1 className="text-xl font-semibold text-[#5A6A7A] dark:text-[#94A3B8] flex items-center gap-2">
                                 <span className="text-2xl">{config.icon}</span>
                                 {config.name}
                             </h1>
-                            <p className="text-sm text-[#5A6A7A]/70 flex items-center gap-1">
-                                <Bot className="w-4 h-4" />
+                            <p className="text-sm text-[#5A6A7A]/70 dark:text-[#94A3B8]/70 flex items-center gap-1">
                                 AI Agent Online
                             </p>
                         </div>
                     </div>
                 </div>
-                <div className="flex gap-2 sm:gap-4 w-full sm:w-auto justify-center sm:justify-end">
+                <div className="flex gap-2 sm:gap-4 w-full sm:w-auto justify-center sm:justify-end items-center">
+                    <ThemeToggle />
                     <Link href="/">
                         <Button className="bg-[#3887F6] hover:bg-[#2563eb] text-white px-6 py-4 rounded-full font-semibold shadow-lg transition w-full sm:w-auto cursor-pointer">
                             Home
@@ -190,11 +191,11 @@ export default function AgentPage() {
             {/* Main Content */}
             <main className="flex flex-1 flex-col items-center justify-center z-10 relative px-4 py-8">
                 <div className="w-full max-w-6xl">
-                        <Chatbot
-                            agentName={config.name}
-                            agentDescription={config.description}
-                            onSendMessage={handleSendMessage}
-                        />
+                    <Chatbot
+                        agentName={config.name}
+                        agentDescription={config.description}
+                        onSendMessage={handleSendMessage}
+                    />
                 </div>
             </main>
         </TechBackground>
