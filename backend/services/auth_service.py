@@ -1,0 +1,29 @@
+from sqlalchemy.orm import Session
+from backend.models.organization import Organization
+from backend.schemas.auth import SignupRequest, SigninRequest
+from backend.core.security import hash_password, verify_password, create_access_token
+from fastapi import HTTPException, status
+
+
+def signup_org(db: Session, data: SignupRequest):
+    if db.query(Organization).filter_by(email=data.email).first():
+        raise HTTPException(status_code=400, detail="Email já registrado")
+
+    org = Organization(
+        name=data.name,
+        email=data.email,
+        hashed_password=hash_password(data.password)
+    )
+    db.add(org)
+    db.commit()
+    db.refresh(org)
+
+    return create_access_token({"sub": org.email})
+
+
+def signin_org(db: Session, data: SigninRequest):
+    org = db.query(Organization).filter_by(email=data.email).first()
+    if not org or not verify_password(data.password, org.hashed_password):
+        raise HTTPException(status_code=401, detail="Credenciais inválidas")
+
+    return create_access_token({"sub": org.email})
