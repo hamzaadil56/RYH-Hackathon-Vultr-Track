@@ -6,8 +6,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from database import get_db
-from backend.models.models import Company, User
-from backend.schemas.schemas import TokenData
+from models.models import Company, User
+from schemas.schemas import TokenData
 from config import settings
 
 # Password hashing

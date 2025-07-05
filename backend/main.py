@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.database import engine
 from models.models import Base
-from backend.api.routes.auth import router as auth_router
+from api.routes.auth import router as auth_router
 from core.config import settings
 
 # Create database tables
