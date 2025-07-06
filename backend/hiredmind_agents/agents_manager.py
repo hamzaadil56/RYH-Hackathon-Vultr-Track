@@ -116,7 +116,7 @@ class Agents:
         if agent is None:
             raise ValueError(f"Agent '{agent_name}' not found")
 
-        return Runner.run_sync(agent, message)
+        return Runner.run_sync(agent, input=message)
 
     def run_agent_direct(self, agent: Agent, message: str) -> Any:
         """
