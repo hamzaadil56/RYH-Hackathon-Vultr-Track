@@ -2,9 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from core.database import engine
-from models.models import Base
 from api.routes.auth import router as auth_router
 from api.routes.jobs import router as jobs_router
+from api.routes.initialScreening import router as initial_screening_router
+from core.database import Base
 from core.config import settings
 
 # Create database tables
@@ -32,7 +33,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Include routers
 app.include_router(auth_router)
 app.include_router(jobs_router)
-
+app.include_router(initial_screening_router)
 
 @app.get("/")
 def read_root():

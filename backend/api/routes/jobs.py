@@ -9,11 +9,11 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from core.database import get_db
 from core.security import get_current_company, get_current_user
-from models.models import Company, User
-from pydantic import BaseModel
+from models.Company import Company
 from openai.types.responses import ResponseTextDeltaEvent
 from hiredmind_agents.job_creator_agent import job_creator_agent
-
+from schemas.Job import JobCreationRequest, JobCreationPromptRequest
+from models.Job import Job
 # Import your agent manager and job creator
 # import sys
 # import os
@@ -26,16 +26,10 @@ agents_manager = Agents()
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
 
-class JobCreationRequest(BaseModel):
-    user_prompt: str
 
 
-class JobCreationResponse(BaseModel):
-    job_post: str
-    status: str = "completed"
 
-
-async def stream_job_creation(job_request: JobCreationRequest, company: Company) -> AsyncGenerator[str, None]:
+async def stream_job_creation(job_request: JobCreationPromptRequest, company: Company) -> AsyncGenerator[str, None]:
     """
     Stream the job creation process.
     """
@@ -101,6 +95,42 @@ async def create_job_stream(
             "Content-Type": "text/event-stream",
         }
     )
+
+@router.post("/create")
+async def create_job(job_request: JobCreationRequest, db: Session = Depends(get_db), current_company: Company = Depends(get_current_company)):
+    try:
+        job = Job(
+            title=job_request.title,
+            description=job_request.description,
+            companyId=current_company.id
+        )
+        db.add(job)
+        db.commit()
+        db.refresh(job)
+        return {"job_id": job.id}
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Error creating job: {str(e)}")
+
+
+@router.get("/{job_id}")
+def get_job(job_id: int, db: Session = Depends(get_db)):
+    job = db.query(Job).filter(Job.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    return {"job": job}
+
+@router.get("/")
+def list_jobs(db: Session = Depends(get_db)):
+    jobs = db.query(Job).all()
+    return jobs
+
+
+
+
+
+
+
+
 
 
 # @router.post("/create", response_model=JobCreationResponse)

@@ -3,7 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from core.database import get_db
-from models.models import Company, User
+from models.Company import Company
+from models.User import User
 from schemas.schemas import (
     CompanyCreate, CompanyResponse, CompanyLogin,
     UserCreate, UserResponse, UserLogin,
