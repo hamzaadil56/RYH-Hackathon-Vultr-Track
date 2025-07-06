@@ -13,9 +13,12 @@ class Company(Base):
     email = Column(String, unique=True, nullable=False, index=True)
     hashed_password = Column(String, nullable=False)
 
+    description = Column(String, nullable=True)
+    industry = Column(String, nullable=True)
+    size = Column(String, nullable=True)
+    website = Column(String, nullable=True)
+
     job_postings = relationship("JobPosting", back_populates="company", cascade="all, delete-orphan")
-
-
 class User(Base):
     __tablename__ = "users"
 
