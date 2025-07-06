@@ -4,7 +4,7 @@ from core.database import engine
 from models.models import Base
 from api.routes.auth import router as auth_router
 from core.config import settings
-
+from api.routes.jobs import router as jobs_router
 # Create database tables
 Base.metadata.create_all(bind=engine)
 
@@ -26,7 +26,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(auth_router)
-
+app.include_router(jobs_router)
 
 @app.get("/")
 def read_root():
