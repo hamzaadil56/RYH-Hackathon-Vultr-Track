@@ -168,18 +168,18 @@ class Agents:
         self.agents.clear()
 
 
-# Example usage and testing
-if __name__ == "__main__":
-    # Create an instance of the Agents manager
-    agents_manager = Agents()
+# # Example usage and testing
+# if __name__ == "__main__":
+#     # Create an instance of the Agents manager
+#     agents_manager = Agents()
 
-    # Create different types of agents
-    assistant = agents_manager.create_assistant_agent()
-    job_creator = agents_manager.create_job_creator_agent()
+#     # Create different types of agents
+#     assistant = agents_manager.create_assistant_agent()
+#     job_creator = agents_manager.create_job_creator_agent()
 
-    # Run the assistant agent
-    result = agents_manager.run_agent("Assistant", "Hello")
-    print(f"Assistant response: {result.final_output}")
+#     # Run the assistant agent
+#     result = agents_manager.run_agent("Assistant", "Hello")
+#     print(f"Assistant response: {result.final_output}")
 
-    # List all agents
-    print(f"Available agents: {agents_manager.list_agents()}")
+#     # List all agents
+#     print(f"Available agents: {agents_manager.list_agents()}")

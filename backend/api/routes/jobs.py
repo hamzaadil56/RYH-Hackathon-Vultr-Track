@@ -1,4 +1,4 @@
-from agents import function_tool, Runner
+from agents import function_tool, Runner, ItemHelpers
 from hiredmind_agents.instructions.job_creator_instructions import JOB_CREATOR_INSTRUCTIONS
 from hiredmind_agents.agents_manager import Agents
 import asyncio
@@ -12,48 +12,22 @@ from core.security import get_current_company, get_current_user
 from models.models import Company, User
 from pydantic import BaseModel
 from openai.types.responses import ResponseTextDeltaEvent
+from hiredmind_agents.job_creator_agent import job_creator_agent
 
 # Import your agent manager and job creator
-import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(
-    __file__), '..', '..', 'hiredmind_agents'))
+# import sys
+# import os
+# sys.path.append(os.path.join(os.path.dirname(
+#     __file__), '..', '..', 'hiredmind_agents'))
 
+
+agents_manager = Agents()
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
-# Initialize agents manager
-agents_manager = Agents()
-
-
-@function_tool
-def fetch_company_details() -> str:
-    """
-    Fetch company details from an external source.
-
-    Args:
-        company_name (str): The name of the company to fetch details for.
-
-    Returns:
-        str: A string containing the company details.
-    """
-    return "Company details are: Company HamzaLtd, a leading provider of innovative tech solutions, specializing in AI and machine learning. Founded in 2010, we have grown to a team of over 200 professionals dedicated to delivering cutting-edge products and services."
-
-
-# Create job creator agent
-job_creator_agent = agents_manager.create_agent(
-    name="JobCreator",
-    instructions=JOB_CREATOR_INSTRUCTIONS,
-    model="llama-3.3-70b-versatile",
-    tools=[fetch_company_details],
-)
-
 
 class JobCreationRequest(BaseModel):
-    job_title: str
-    description: str = ""
-    requirements: str = ""
-    company_context: str = ""
+    user_prompt: str
 
 
 class JobCreationResponse(BaseModel):
@@ -67,13 +41,15 @@ async def stream_job_creation(job_request: JobCreationRequest, company: Company)
     """
     # Create the input for the agent
     input_text = f"""
-    Create a job post for: {job_request.job_title}
-    
-    Additional Description: {job_request.description}
-    Requirements: {job_request.requirements}
-    Company Context: {job_request.company_context or f"Company: {company.name}, Industry: {company.industry}, Size: {company.size}"}
-    
-    Please create a comprehensive job posting.
+        Here is the company context:
+        Company Name: {company.name}
+        Company Description: {company.description}
+        Industry: {company.industry}
+
+        Here is the user's prompt:
+
+        {job_request.user_prompt}
+
     """
 
     try:
@@ -96,7 +72,8 @@ async def stream_job_creation(job_request: JobCreationRequest, company: Company)
 
                 elif event.item.type == "message_output_item":
                     # Send the complete message
-                    message_content = event.item.content[0].text if event.item.content else ""
+                    message_content = ItemHelpers.text_message_output(
+                        event.item)
                     yield f"data: {json.dumps({'type': 'message_complete', 'content': message_content})}\n\n"
 
         # Send completion signal
@@ -107,7 +84,7 @@ async def stream_job_creation(job_request: JobCreationRequest, company: Company)
         yield f"data: {json.dumps({'type': 'error', 'message': str(e)})}\n\n"
 
 
-@router.post("/create/stream")
+@router.post("/create-job-posting/stream")
 async def create_job_stream(
     job_request: JobCreationRequest,
     current_company: Company = Depends(get_current_company)
@@ -126,57 +103,36 @@ async def create_job_stream(
     )
 
 
-@router.post("/create", response_model=JobCreationResponse)
-async def create_job(
-    job_request: JobCreationRequest,
-    current_company: Company = Depends(get_current_company)
-):
-    """
-    Create a job posting (non-streaming version).
-    """
-    try:
-        # Create the input for the agent
-        input_text = f"""
-        Create a job post for: {job_request.job_title}
-        
-        Additional Description: {job_request.description}
-        Requirements: {job_request.requirements}
-        Company Context: {job_request.company_context or f"Company: {current_company.name}, Industry: {current_company.industry}, Size: {current_company.size}"}
-        
-        Please create a comprehensive job posting.
-        """
+# @router.post("/create", response_model=JobCreationResponse)
+# async def create_job(
+#     job_request: JobCreationRequest,
+#     current_company: Company = Depends(get_current_company)
+# ):
+#     """
+#     Create a job posting (non-streaming version).
+#     """
+#     try:
+#         # Create the input for the agent
+#         input_text = f"""
+#         Create a job post for: {job_request.job_title}
 
-        # Run the agent
-        result = agents_manager.run_agent("JobCreator", input_text)
+#         Additional Description: {job_request.description}
+#         Requirements: {job_request.requirements}
+#         Company Context: {job_request.company_context or f"Company: {current_company.name}, Industry: {current_company.industry}, Size: {current_company.size}"}
 
-        return JobCreationResponse(
-            job_post=result.final_output,
-            status="completed"
-        )
+#         Please create a comprehensive job posting.
+#         """
 
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error creating job posting: {str(e)}"
-        )
+#         # Run the agent
+#         result = agents_manager.run_agent("JobCreator", input_text)
 
+#         return JobCreationResponse(
+#             job_post=result.final_output,
+#             status="completed"
+#         )
 
-@router.get("/health")
-async def job_agent_health():
-    """
-    Health check for the job creator agent.
-    """
-    try:
-        # Test the agent with a simple request
-        result = agents_manager.run_agent(
-            "JobCreator", "Hello, are you working?")
-        return {
-            "status": "healthy",
-            "agent": "JobCreator",
-            "response": result.final_output[:100] + "..." if len(result.final_output) > 100 else result.final_output
-        }
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Job creator agent is not available: {str(e)}"
-        )
+#     except Exception as e:
+#         raise HTTPException(
+#             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#             detail=f"Error creating job posting: {str(e)}"
+#         )
