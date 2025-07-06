@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from core.database import engine
 from models.models import Base
 from api.routes.auth import router as auth_router
+from api.routes.jobs import router as jobs_router
 from core.config import settings
 
 # Create database tables
@@ -24,8 +26,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # Include routers
 app.include_router(auth_router)
+app.include_router(jobs_router)
 
 
 @app.get("/")
@@ -34,7 +40,8 @@ def read_root():
     return {
         "message": "Welcome to HiredMind API",
         "version": "1.0.0",
-        "docs": "/docs"
+        "docs": "/docs",
+        "test_page": "/static/test_streaming.html"
     }
 
 

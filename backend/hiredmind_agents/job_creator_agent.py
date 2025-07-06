@@ -1,5 +1,5 @@
-from agents_manager import Agents
-from instructions.job_creator_instructions import JOB_CREATOR_INSTRUCTIONS
+from hiredmind_agents.agents_manager import Agents
+from hiredmind_agents.instructions.job_creator_instructions import JOB_CREATOR_INSTRUCTIONS
 from pydantic import BaseModel
 from agents import function_tool
 
@@ -38,11 +38,3 @@ job_creator_agent = agents_manager.create_agent(
     model="llama-3.3-70b-versatile",
     tools=[fetch_company_details],
 )
-
-
-# Example usage
-result = agents_manager.run_agent(
-    "JobCreator",
-    "Create a job post for a Software Engineer"
-)
-print(result.final_output)

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Job Creator Streaming Test</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			.form-group {
+				margin-bottom: 15px;
+			}
+			label {
+				display: block;
+				margin-bottom: 5px;
+				font-weight: bold;
+			}
+			input,
+			textarea {
+				width: 100%;
+				padding: 8px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+			}
+			textarea {
+				height: 100px;
+				resize: vertical;
+			}
+			button {
+				background-color: #007bff;
+				color: white;
+				padding: 10px 20px;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+				margin-right: 10px;
+			}
+			button:hover {
+				background-color: #0056b3;
+			}
+			button:disabled {
+				background-color: #6c757d;
+				cursor: not-allowed;
+			}
+			.output {
+				margin-top: 20px;
+				padding: 15px;
+				border: 1px solid #ddd;
+				border-radius: 4px;
+				background-color: #f8f9fa;
+				min-height: 200px;
+				white-space: pre-wrap;
+			}
+			.status {
+				margin-top: 10px;
+				padding: 10px;
+				border-radius: 4px;
+			}
+			.status.success {
+				background-color: #d4edda;
+				color: #155724;
+				border: 1px solid #c3e6cb;
+			}
+			.status.error {
+				background-color: #f8d7da;
+				color: #721c24;
+				border: 1px solid #f5c6cb;
+			}
+			.status.info {
+				background-color: #d1ecf1;
+				color: #0c5460;
+				border: 1px solid #bee5eb;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Job Creator Streaming Test</h1>
+
+		<div class="form-group">
+			<label for="token">Bearer Token:</label>
+			<input
+				type="text"
+				id="token"
+				placeholder="Enter your Bearer token here"
+			/>
+		</div>
+
+		<div class="form-group">
+			<label for="jobTitle">Job Title:</label>
+			<input
+				type="text"
+				id="jobTitle"
+				value="Software Engineer"
+				placeholder="Enter job title"
+			/>
+		</div>
+
+		<div class="form-group">
+			<label for="description">Description:</label>
+			<textarea
+				id="description"
+				placeholder="Enter additional description (optional)"
+			></textarea>
+		</div>
+
+		<div class="form-group">
+			<label for="requirements">Requirements:</label>
+			<textarea
+				id="requirements"
+				placeholder="Enter requirements (optional)"
+			></textarea>
+		</div>
+
+		<div class="form-group">
+			<label for="companyContext">Company Context:</label>
+			<textarea
+				id="companyContext"
+				placeholder="Enter company context (optional)"
+			></textarea>
+		</div>
+
+		<button onclick="testStreaming()">Test Streaming</button>
+		<button onclick="testNonStreaming()">Test Non-Streaming</button>
+		<button onclick="clearOutput()">Clear Output</button>
+
+		<div id="status" class="status" style="display: none"></div>
+		<div id="output" class="output"></div>
+
+		<script>
+			const API_BASE = "http://localhost:8000";
+
+			function showStatus(message, type = "info") {
+				const statusDiv = document.getElementById("status");
+				statusDiv.textContent = message;
+				statusDiv.className = `status ${type}`;
+				statusDiv.style.display = "block";
+			}
+
+			function appendOutput(text) {
+				const outputDiv = document.getElementById("output");
+				outputDiv.textContent += text;
+				outputDiv.scrollTop = outputDiv.scrollHeight;
+			}
+
+			function clearOutput() {
+				document.getElementById("output").textContent = "";
+				document.getElementById("status").style.display = "none";
+			}
+
+			async function testStreaming() {
+				const token = document.getElementById("token").value;
+				if (!token) {
+					showStatus("Please enter a Bearer token", "error");
+					return;
+				}
+
+				clearOutput();
+				showStatus("Starting streaming request...", "info");
+
+				const jobData = {
+					job_title: document.getElementById("jobTitle").value,
+					description: document.getElementById("description").value,
+					requirements: document.getElementById("requirements").value,
+					company_context:
+						document.getElementById("companyContext").value,
+				};
+
+				try {
+					const response = await fetch(
+						`${API_BASE}/jobs/create/stream`,
+						{
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+								Authorization: `Bearer ${token}`,
+							},
+							body: JSON.stringify(jobData),
+						}
+					);
+
+					if (!response.ok) {
+						throw new Error(
+							`HTTP error! status: ${response.status}`
+						);
+					}
+
+					const reader = response.body.getReader();
+					const decoder = new TextDecoder();
+
+					while (true) {
+						const { done, value } = await reader.read();
+						if (done) break;
+
+						const chunk = decoder.decode(value);
+						const lines = chunk.split("\n");
+
+						for (const line of lines) {
+							if (line.startsWith("data: ")) {
+								try {
+									const data = JSON.parse(line.slice(6));
+
+									switch (data.type) {
+										case "text_delta":
+											appendOutput(data.content);
+											break;
+										case "tool_call":
+											appendOutput(
+												"\n[Tool being called...]\n"
+											);
+											break;
+										case "tool_output":
+											appendOutput(
+												"\n[Tool execution completed]\n"
+											);
+											break;
+										case "message_complete":
+											appendOutput(
+												"\n\n[Message Complete]\n"
+											);
+											break;
+										case "complete":
+											showStatus(
+												"Streaming completed successfully!",
+												"success"
+											);
+											break;
+										case "error":
+											showStatus(
+												`Error: ${data.message}`,
+												"error"
+											);
+											break;
+									}
+								} catch (e) {
+									console.error("Error parsing SSE data:", e);
+								}
+							}
+						}
+					}
+				} catch (error) {
+					showStatus(`Error: ${error.message}`, "error");
+					console.error("Error:", error);
+				}
+			}
+
+			async function testNonStreaming() {
+				const token = document.getElementById("token").value;
+				if (!token) {
+					showStatus("Please enter a Bearer token", "error");
+					return;
+				}
+
+				clearOutput();
+				showStatus("Starting non-streaming request...", "info");
+
+				const jobData = {
+					job_title: document.getElementById("jobTitle").value,
+					description: document.getElementById("description").value,
+					requirements: document.getElementById("requirements").value,
+					company_context:
+						document.getElementById("companyContext").value,
+				};
+
+				try {
+					const response = await fetch(`${API_BASE}/jobs/create`, {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${token}`,
+						},
+						body: JSON.stringify(jobData),
+					});
+
+					if (!response.ok) {
+						throw new Error(
+							`HTTP error! status: ${response.status}`
+						);
+					}
+
+					const result = await response.json();
+					appendOutput(result.job_post);
+					showStatus(
+						"Non-streaming request completed successfully!",
+						"success"
+					);
+				} catch (error) {
+					showStatus(`Error: ${error.message}`, "error");
+					console.error("Error:", error);
+				}
+			}
+		</script>
+	</body>
+</html>

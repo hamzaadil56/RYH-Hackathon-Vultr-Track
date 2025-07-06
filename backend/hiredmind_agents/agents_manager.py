@@ -118,6 +118,23 @@ class Agents:
 
         return Runner.run_sync(agent, input=message)
 
+    async def run_agent_streaming(self, agent_name: str, message: str) -> Any:
+        """
+        Run an agent with a specific message.
+
+        Args:
+            agent_name: The name of the agent to run
+            message: The message to send to the agent
+
+        Returns:
+            Any: The result from the agent
+        """
+        agent = self.get_agent(agent_name)
+        if agent is None:
+            raise ValueError(f"Agent '{agent_name}' not found")
+
+        return Runner.run_streamed(agent, input=message)
+
     def run_agent_direct(self, agent: Agent, message: str) -> Any:
         """
         Run an agent directly without storing it.
@@ -151,18 +168,18 @@ class Agents:
         self.agents.clear()
 
 
-# Example usage and testing
-if __name__ == "__main__":
-    # Create an instance of the Agents manager
-    agents_manager = Agents()
+# # Example usage and testing
+# if __name__ == "__main__":
+#     # Create an instance of the Agents manager
+#     agents_manager = Agents()
 
-    # Create different types of agents
-    assistant = agents_manager.create_assistant_agent()
-    job_creator = agents_manager.create_job_creator_agent()
+#     # Create different types of agents
+#     assistant = agents_manager.create_assistant_agent()
+#     job_creator = agents_manager.create_job_creator_agent()
 
-    # Run the assistant agent
-    result = agents_manager.run_agent("Assistant", "Hello")
-    print(f"Assistant response: {result.final_output}")
+#     # Run the assistant agent
+#     result = agents_manager.run_agent("Assistant", "Hello")
+#     print(f"Assistant response: {result.final_output}")
 
-    # List all agents
-    print(f"Available agents: {agents_manager.list_agents()}")
+#     # List all agents
+#     print(f"Available agents: {agents_manager.list_agents()}")
