@@ -12,7 +12,11 @@ def signup_org(db: Session, data: SignupRequest):
     org = Organization(
         name=data.name,
         email=data.email,
-        hashed_password=get_password_hash(data.password)
+        hashed_password=get_password_hash(data.password),
+        description=data.description,
+        industry=data.industry,
+        size=data.size,
+        website=data.website
     )
     db.add(org)
     db.commit()
