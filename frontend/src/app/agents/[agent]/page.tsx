@@ -147,46 +147,7 @@ export default function AgentPage() {
 
     return (
         <TechBackground>
-            {/* Header */}
-            <header className="flex flex-col sm:flex-row justify-between items-center px-4 sm:px-8 py-4 sm:py-6 z-10 relative gap-4 sm:gap-0">
-                <div className="flex items-center gap-4">
-                    <Link href="/agents">
-                        <Button variant="ghost" className="p-2 hover:bg-[#3887F6]/10 text-[#5A6A7A] dark:text-[#94A3B8] border border-[#3887F6]/20">
-                            <ArrowLeft className="w-5 h-5" />
-                        </Button>
-                    </Link>
-                    <div className="flex items-center gap-3">
-                        <div className="relative">
-                            <Image
-                                src="/assets/Logo.png"
-                                alt="Company Logo"
-                                width={48}
-                                height={48}
-                                className="object-contain w-12 h-12"
-                                priority
-                            />
-                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-[#3AC7A7] rounded-full border-2 border-white animate-pulse"></div>
-                        </div>
-                        <div>
-                            <h1 className="text-xl font-semibold text-[#5A6A7A] dark:text-[#94A3B8] flex items-center gap-2">
-                                <span className="text-2xl">{config.icon}</span>
-                                {config.name}
-                            </h1>
-                            <p className="text-sm text-[#5A6A7A]/70 dark:text-[#94A3B8]/70 flex items-center gap-1">
-                                AI Agent Online
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex gap-2 sm:gap-4 w-full sm:w-auto justify-center sm:justify-end items-center">
-                    <ThemeToggle />
-                    <Link href="/">
-                        <Button className="bg-[#3887F6] hover:bg-[#2563eb] text-white px-6 py-4 rounded-full font-semibold shadow-lg transition w-full sm:w-auto cursor-pointer">
-                            Home
-                        </Button>
-                    </Link>
-                </div>
-            </header>
+        
 
             {/* Main Content */}
             <main className="flex flex-1 flex-col items-center justify-center z-10 relative px-4 py-8">
