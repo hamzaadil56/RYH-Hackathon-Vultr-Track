@@ -1,10 +1,6 @@
 'use client'
 import Link from "next/link";
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import TechBackground from '@/components/TechBackground';
-import { ThemeToggle } from "@/components/ThemeToggle";
 import {
     FileText,
     Users,
@@ -15,10 +11,6 @@ import {
     ArrowRight,
     Sparkles
 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { UserAvatar } from "@/components/UserAvatar";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const agents = [
@@ -73,9 +65,6 @@ export default function AgentsPage() {
     return (
         <ProtectedRoute>
             <TechBackground>
-                {/* Header (copied from home page) */}
-          
-
                 {/* Main Content */}
                 <main className="flex flex-1 flex-col items-center justify-center text-center z-10 relative px-4 py-8 sm:py-0">
                     <div className="max-w-6xl w-full">

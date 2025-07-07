@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const token = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('user');
 
-        if (token && savedUser) {
+        if (token && savedUser ) {
             try {
                 // Check if token is expired
                 if (isTokenExpired(token)) {
