@@ -3,11 +3,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Chatbot from '@/components/Chatbot'
 import TechBackground from '@/components/TechBackground'
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, Bot, Sparkles } from "lucide-react"
-import Link from "next/link"
+import {  Sparkles } from "lucide-react"
 import Image from 'next/image'
-import { ThemeToggle } from "@/components/ThemeToggle"
 
 interface AgentConfig {
     name: string;
@@ -147,8 +144,6 @@ export default function AgentPage() {
 
     return (
         <TechBackground>
-        
-
             {/* Main Content */}
             <main className="flex flex-1 flex-col items-center justify-center z-10 relative px-4 py-8">
                 <div className="w-full max-w-6xl">
