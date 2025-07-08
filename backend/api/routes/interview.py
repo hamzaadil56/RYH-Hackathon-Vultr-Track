@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
 from core.database import get_db
 from schemas.Interview import GetInterviewQuestionRequest, EvaluateInterviewRequest
+from models.InterviewResult import InterviewResult
 load_dotenv()
 
 router = APIRouter(prefix="/interview")
@@ -38,6 +39,10 @@ async def EvaluateInterview(request: EvaluateInterviewRequest, db: Session = Dep
         raise HTTPException(status_code=404, detail="User not found")
     response = await interview_evaluation_agent.EvaluateResponses(job.title, job.description, conversation_history[request.userId])
     conversation_history.pop(request.userId)
+    interviewResult = InterviewResult(userId=request.userId, jobId=request.jobId, companyId=job.companyId, verdict=response["verdict"], reasoning=response["reasoning"])
+    db.add(interviewResult)
+    db.commit()
+    db.refresh(interviewResult)
     return {"verdict": response["verdict"], "reasoning": response["reasoning"]}
 
 

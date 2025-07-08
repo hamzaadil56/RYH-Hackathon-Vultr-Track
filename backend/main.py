@@ -6,6 +6,7 @@ from api.routes.auth import router as auth_router
 from api.routes.jobs import router as jobs_router
 from api.routes.initialScreening import router as initial_screening_router
 from api.routes.interview import router as interview_router
+from api.routes.interviewResults import router as interview_results_router
 from core.database import Base
 from core.config import settings
 
@@ -36,6 +37,7 @@ app.include_router(auth_router)
 app.include_router(jobs_router)
 app.include_router(initial_screening_router)
 app.include_router(interview_router)
+app.include_router(interview_results_router)
 
 @app.get("/")
 def read_root():
