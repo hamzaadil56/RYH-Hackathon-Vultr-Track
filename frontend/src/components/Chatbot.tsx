@@ -63,7 +63,7 @@ export default function Chatbot({
 			abortControllerRef.current = new AbortController();
 
 			const response = await fetch(
-				"http://localhost:8000/jobs/create-job-posting/stream",
+				"http://45.63.114.116/jobs/create-job-posting/stream",
 				{
 					method: "POST",
 					headers: {
@@ -263,24 +263,32 @@ export default function Chatbot({
 									)}
 									{message.sender === "bot" ? (
 										<div className="text-sm leading-relaxed">
-											<ReactMarkdown
-												components={{
-													strong: ({ node, ...props }) => <strong className="font-bold text-black dark:text-white" {...props} />,
-													em: ({ node, ...props }) => <em className="italic" {...props} />,
-													code: ({ node, ...props }) => <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm font-mono" {...props} />,
-													pre: ({ node, ...props }) => <pre className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg overflow-x-auto my-2" {...props} />,
-													ul: ({ node, ...props }) => <ul className="list-disc list-inside space-y-1 my-2" {...props} />,
-													ol: ({ node, ...props }) => <ol className="list-decimal list-inside space-y-1 my-2" {...props} />,
-													li: ({ node, ...props }) => <li className="ml-4" {...props} />,
-													p: ({ node, ...props }) => <p className="mb-2" {...props} />,
-													h1: ({ node, ...props }) => <h1 className="text-xl font-bold mb-2 text-black dark:text-white" {...props} />,
-													h2: ({ node, ...props }) => <h2 className="text-lg font-bold mb-2 text-black dark:text-white" {...props} />,
-													h3: ({ node, ...props }) => <h3 className="text-base font-bold mb-2 text-black dark:text-white" {...props} />,
-													blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-[#3887F6] pl-4 italic my-2" {...props} />,
-												}}
-											>
-												{message.text}
-											</ReactMarkdown>
+											{(() => {
+												try {
+													const arr = JSON.parse(message.text);
+													if (Array.isArray(arr) && arr.every(q => typeof q === 'string')) {
+														return <ReactMarkdown>{arr.map(q => `- ${q}`).join('\n')}</ReactMarkdown>;
+													}
+												} catch (e) { }
+												return <ReactMarkdown
+													components={{
+														strong: ({ node, ...props }) => <strong className="font-bold text-black dark:text-white" {...props} />,
+														em: ({ node, ...props }) => <em className="italic" {...props} />,
+														code: ({ node, ...props }) => <code className="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm font-mono" {...props} />,
+														pre: ({ node, ...props }) => <pre className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg overflow-x-auto my-2" {...props} />,
+														ul: ({ node, ...props }) => <ul className="list-disc list-inside space-y-1 my-2" {...props} />,
+														ol: ({ node, ...props }) => <ol className="list-decimal list-inside space-y-1 my-2" {...props} />,
+														li: ({ node, ...props }) => <li className="ml-4" {...props} />,
+														p: ({ node, ...props }) => <p className="mb-2" {...props} />,
+														h1: ({ node, ...props }) => <h1 className="text-xl font-bold mb-2 text-black dark:text-white" {...props} />,
+														h2: ({ node, ...props }) => <h2 className="text-lg font-bold mb-2 text-black dark:text-white" {...props} />,
+														h3: ({ node, ...props }) => <h3 className="text-base font-bold mb-2 text-black dark:text-white" {...props} />,
+														blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-[#3887F6] pl-4 italic my-2" {...props} />,
+													}}
+												>
+													{message.text}
+												</ReactMarkdown>;
+											})()}
 											{message.isStreaming && (
 												<span className="inline-block w-0.5 h-5 bg-[#3887F6] ml-1 animate-pulse" style={{ animationDuration: '1s' }}></span>
 											)}
