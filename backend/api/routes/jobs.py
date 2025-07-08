@@ -14,6 +14,7 @@ from openai.types.responses import ResponseTextDeltaEvent
 from hiredmind_agents.job_creator_agent import job_creator_agent
 from schemas.Job import JobCreationRequest, JobCreationPromptRequest
 from models.Job import Job
+from datetime import datetime, timezone
 # Import your agent manager and job creator
 # import sys
 # import os
@@ -102,7 +103,9 @@ async def create_job(job_request: JobCreationRequest, db: Session = Depends(get_
         job = Job(
             title=job_request.title,
             description=job_request.description,
-            companyId=current_company.id
+            companyId=current_company.id,
+            created_at=datetime.now(timezone.utc),
+            updated_at=datetime.now(timezone.utc)
         )
         db.add(job)
         db.commit()
