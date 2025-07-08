@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -116,68 +116,70 @@ export default function ScreeningPage() {
     return (
         <TechBackground>
             <main className="flex flex-1 flex-col items-center justify-center z-10 relative px-4 py-8 min-h-screen">
-                <div className="w-full max-w-3xl">
-                    <div className="flex items-center gap-3 mb-6 justify-center">
-                        <Bot className="w-8 h-8 text-[#3887F6]" />
-                        <h2 className="text-2xl font-bold bg-gradient-to-r from-[#3887F6] to-[#3AC7A7] bg-clip-text text-transparent">Resume Screening</h2>
-                    </div>
-                    <p className="text-center text-gray-500 dark:text-gray-400 mb-6">
-                        Upload your resume (PDF) and start chatting with our Resume Screener Agent.
-                    </p>
-                    <div className="mb-4 text-center">
-                        {jobId && companyId && (
-                            <div className="text-xs text-gray-500">Screening for Job ID: <span className="font-bold">{jobId}</span> at Company ID: <span className="font-bold">{companyId}</span></div>
+                <Suspense fallback={<div>Loading...</div>}>
+                    <div className="w-full max-w-3xl">
+                        <div className="flex items-center gap-3 mb-6 justify-center">
+                            <Bot className="w-8 h-8 text-[#3887F6]" />
+                            <h2 className="text-2xl font-bold bg-gradient-to-r from-[#3887F6] to-[#3AC7A7] bg-clip-text text-transparent">Resume Screening</h2>
+                        </div>
+                        <p className="text-center text-gray-500 dark:text-gray-400 mb-6">
+                            Upload your resume (PDF) and start chatting with our Resume Screener Agent.
+                        </p>
+                        <div className="mb-4 text-center">
+                            {jobId && companyId && (
+                                <div className="text-xs text-gray-500">Screening for Job ID: <span className="font-bold">{jobId}</span> at Company ID: <span className="font-bold">{companyId}</span></div>
+                            )}
+                        </div>
+                        {!chatStarted ? (
+                            <>
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium mb-2 text-[#3887F6] dark:text-[#3AC7A7]">Upload Resume (PDF)</label>
+                                    <div className="flex items-center gap-2">
+                                        <Input
+                                            type="file"
+                                            accept="application/pdf"
+                                            onChange={handleFileChange}
+                                            ref={fileInputRef}
+                                            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3887F6] dark:bg-[#334155] dark:text-white file:bg-[#3887F6] file:text-white file:rounded file:px-3 file:py-1 file:border-0 file:mr-2"
+                                            disabled={uploading}
+                                        />
+                                        <Button
+                                            type="button"
+                                            onClick={handleUpload}
+                                            className="bg-gradient-to-r from-[#3887F6] to-[#3AC7A7] text-white font-semibold px-6 py-2 rounded-lg shadow hover:from-[#2563eb] hover:to-[#1fa88b] transition-colors duration-200"
+                                            disabled={uploading || !resume}
+                                        >
+                                            {uploading ? "Uploading..." : uploadSuccess ? "Uploaded!" : "Upload"}
+                                        </Button>
+                                    </div>
+                                    {resume && !uploading && !uploadSuccess && (
+                                        <div className="text-xs text-gray-500 mt-1">Selected: {resume.name}</div>
+                                    )}
+                                    {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+                                    {uploadSuccess && (
+                                        <div className="text-green-600 dark:text-green-400 text-sm mt-2">Resume uploaded successfully!</div>
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="mt-8">
+                                <Button
+                                    type="button"
+                                    onClick={() => setChatStarted(false)}
+                                    className="mb-4 bg-[#3887F6] hover:bg-[#2563eb] text-white px-4 py-2 rounded-full font-semibold shadow transition"
+                                >
+                                    Back to Upload
+                                </Button>
+                                <Chatbot
+                                    agentName="Resume Screener Agent"
+                                    agentDescription={`I will help you screen your resume for Job ID: ${jobId} at Company ID: ${companyId}.`}
+                                    onSendMessage={handleScreeningChat}
+                                    initialBotMessage={initialBotMessage}
+                                />
+                            </div>
                         )}
                     </div>
-                    {!chatStarted ? (
-                        <>
-                            <div className="mb-6">
-                                <label className="block text-sm font-medium mb-2 text-[#3887F6] dark:text-[#3AC7A7]">Upload Resume (PDF)</label>
-                                <div className="flex items-center gap-2">
-                                    <Input
-                                        type="file"
-                                        accept="application/pdf"
-                                        onChange={handleFileChange}
-                                        ref={fileInputRef}
-                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3887F6] dark:bg-[#334155] dark:text-white file:bg-[#3887F6] file:text-white file:rounded file:px-3 file:py-1 file:border-0 file:mr-2"
-                                        disabled={uploading}
-                                    />
-                                    <Button
-                                        type="button"
-                                        onClick={handleUpload}
-                                        className="bg-gradient-to-r from-[#3887F6] to-[#3AC7A7] text-white font-semibold px-6 py-2 rounded-lg shadow hover:from-[#2563eb] hover:to-[#1fa88b] transition-colors duration-200"
-                                        disabled={uploading || !resume}
-                                    >
-                                        {uploading ? "Uploading..." : uploadSuccess ? "Uploaded!" : "Upload"}
-                                    </Button>
-                                </div>
-                                {resume && !uploading && !uploadSuccess && (
-                                    <div className="text-xs text-gray-500 mt-1">Selected: {resume.name}</div>
-                                )}
-                                {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
-                                {uploadSuccess && (
-                                    <div className="text-green-600 dark:text-green-400 text-sm mt-2">Resume uploaded successfully!</div>
-                                )}
-                            </div>
-                        </>
-                    ) : (
-                        <div className="mt-8">
-                            <Button
-                                type="button"
-                                onClick={() => setChatStarted(false)}
-                                className="mb-4 bg-[#3887F6] hover:bg-[#2563eb] text-white px-4 py-2 rounded-full font-semibold shadow transition"
-                            >
-                                Back to Upload
-                            </Button>
-                            <Chatbot
-                                agentName="Resume Screener Agent"
-                                agentDescription={`I will help you screen your resume for Job ID: ${jobId} at Company ID: ${companyId}.`}
-                                onSendMessage={handleScreeningChat}
-                                initialBotMessage={initialBotMessage}
-                            />
-                        </div>
-                    )}
-                </div>
+                </Suspense>
             </main>
         </TechBackground>
     );

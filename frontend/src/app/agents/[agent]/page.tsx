@@ -3,8 +3,9 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Chatbot from '@/components/Chatbot'
 import TechBackground from '@/components/TechBackground'
-import {  Sparkles } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import Image from 'next/image'
+import { Suspense } from 'react';
 
 interface AgentConfig {
     name: string;
@@ -115,26 +116,28 @@ export default function AgentPage() {
 
     if (isLoading) {
         return (
-            <TechBackground>
-                <div className="flex items-center justify-center min-h-screen">
-                    <div className="text-center">
-                        <div className="flex items-center justify-center mb-4">
-                            <Image
-                                src="/assets/Logo.png"
-                                alt="Company Logo"
-                                width={48}
-                                height={48}
-                                className="object-contain w-12 h-12"
-                                priority
-                            />
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Sparkles className="w-5 h-5 animate-pulse text-[#3887F6]" />
-                            <p className="text-lg text-[#5A6A7A] dark:text-[#94A3B8]">Loading AI Agent...</p>
+            <Suspense fallback={<div>Loading...</div>}>
+                <TechBackground>
+                    <div className="flex items-center justify-center min-h-screen">
+                        <div className="text-center">
+                            <div className="flex items-center justify-center mb-4">
+                                <Image
+                                    src="/assets/Logo.png"
+                                    alt="Company Logo"
+                                    width={48}
+                                    height={48}
+                                    className="object-contain w-12 h-12"
+                                    priority
+                                />
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="w-5 h-5 animate-pulse text-[#3887F6]" />
+                                <p className="text-lg text-[#5A6A7A] dark:text-[#94A3B8]">Loading AI Agent...</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </TechBackground>
+                </TechBackground>
+            </Suspense>
         )
     }
 
@@ -143,17 +146,19 @@ export default function AgentPage() {
     }
 
     return (
-        <TechBackground>
-            {/* Main Content */}
-            <main className="flex flex-1 flex-col items-center justify-center z-10 relative px-4 py-8">
-                <div className="w-full max-w-6xl">
-                    <Chatbot
-                        agentName={config.name}
-                        agentDescription={config.description}
-                        onSendMessage={handleSendMessage}
-                    />
-                </div>
-            </main>
-        </TechBackground>
+        <Suspense fallback={<div>Loading...</div>}>
+            <TechBackground>
+                {/* Main Content */}
+                <main className="flex flex-1 flex-col items-center justify-center z-10 relative px-4 py-8">
+                    <div className="w-full max-w-6xl">
+                        <Chatbot
+                            agentName={config.name}
+                            agentDescription={config.description}
+                            onSendMessage={handleSendMessage}
+                        />
+                    </div>
+                </main>
+            </TechBackground>
+        </Suspense>
     )
 } 
