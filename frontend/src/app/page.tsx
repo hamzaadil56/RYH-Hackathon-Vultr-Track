@@ -115,7 +115,7 @@ export default function Home() {
         <main className="flex flex-1 flex-col items-center justify-center text-center z-10 relative px-4 py-8 sm:py-0">
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold bg-gradient-to-r from-[#3887F6] to-[#3AC7A7] bg-clip-text text-transparent mb-4 sm:mb-6">Hired Mind</h1>
           <p className="max-w-2xl text-base sm:text-lg md:text-xl text-[#5A6A7A] dark:text-[#94A3B8] mb-8 sm:mb-10">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+       HiredMind is an AI-powered hiring platform that automates the entire recruitment process. From job posting to resume screening, interviews, and final selection — intelligent agents handle every step, helping companies hire faster and smarter.
           </p>
           <Button
             className="bg-[#3887F6] hover:bg-[#2563eb] text-white px-10 py-6 rounded-full text-lg font-semibold shadow transition w-full sm:w-auto cursor-pointer"
