@@ -19,6 +19,7 @@ interface ChatbotProps {
 	agentName: string;
 	agentDescription: string;
 	onSendMessage?: (message: string) => Promise<string>;
+	initialBotMessage?: string | string[];
 }
 
 interface StreamResponse {
@@ -30,12 +31,19 @@ interface StreamResponse {
 export default function Chatbot({
 	agentName,
 	agentDescription,
+	onSendMessage,
+	initialBotMessage,
 }: ChatbotProps) {
 	const router = useRouter();
 	const [messages, setMessages] = useState<Message[]>([
 		{
 			id: "1",
-			text: `Hello! I'm your ${agentName}. ${agentDescription}`,
+			text:
+				initialBotMessage !== undefined
+					? (Array.isArray(initialBotMessage)
+						? JSON.stringify(initialBotMessage)
+						: initialBotMessage)
+					: `Hello! I'm your ${agentName}. ${agentDescription}`,
 			sender: "bot",
 			timestamp: new Date(),
 		},
