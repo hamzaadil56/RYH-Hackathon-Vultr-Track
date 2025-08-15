@@ -6,7 +6,7 @@ This repository contains the codebase for the Raise Your Hack Hackathon project,
 
 ### HiredMind
 
-This is an AI Powered Hiring Application that can handle all the steps involving the hiring process. This application will handle multiple AI Agents workflows to complete all the necessary steps involved in it.
+Our AI-powered hiring platform streamlines the entire recruitment process by orchestrating multiple AI agent workflows to ensure every step is completed seamlessly.
 
 ## Project Structure
 
